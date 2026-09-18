@@ -205,15 +205,15 @@ class CoffeeTracker {
     updateStats() {
         const now = new Date();
         const today = this.startOfDay(now);
-        const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
-        const monthAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
+        const weekStart = this.getRollingWindowStart(7);
+        const monthStart = this.getRollingWindowStart(30);
 
         const todayCount = this.coffees.filter((coffee) => new Date(coffee.timestamp) >= today).length;
-        const weekCount = this.coffees.filter((coffee) => new Date(coffee.timestamp) >= weekAgo).length;
+        const weekCount = this.coffees.filter((coffee) => new Date(coffee.timestamp) >= weekStart).length;
         const totalCount = this.coffees.length;
         const totalSpent = this.sumPrices(this.coffees);
-        const weekSpent = this.sumPrices(this.coffees.filter((coffee) => new Date(coffee.timestamp) >= weekAgo));
-        const monthSpent = this.sumPrices(this.coffees.filter((coffee) => new Date(coffee.timestamp) >= monthAgo));
+        const weekSpent = this.sumPrices(this.coffees.filter((coffee) => new Date(coffee.timestamp) >= weekStart));
+        const monthSpent = this.sumPrices(this.coffees.filter((coffee) => new Date(coffee.timestamp) >= monthStart));
         const daysTracked = this.getTrackedDayCount();
         const avgPerDay = daysTracked ? totalCount / daysTracked : 0;
         const mostCommonType = this.getMostCommonType();
@@ -319,7 +319,7 @@ class CoffeeTracker {
         }
 
         const days = filter === 'week' ? 7 : 30;
-        const threshold = new Date(today.getTime() - days * 24 * 60 * 60 * 1000);
+        const threshold = this.getRollingWindowStart(days);
         return coffeeDate >= threshold;
     }
 
@@ -347,8 +347,8 @@ class CoffeeTracker {
             return 'Add a coffee to see habit insights.';
         }
 
-        const previousWeekStart = new Date(this.startOfDay(new Date()).getTime() - 14 * 24 * 60 * 60 * 1000);
-        const currentWeekStart = new Date(this.startOfDay(new Date()).getTime() - 7 * 24 * 60 * 60 * 1000);
+        const currentWeekStart = this.getRollingWindowStart(7);
+        const previousWeekStart = new Date(currentWeekStart.getTime() - 7 * 24 * 60 * 60 * 1000);
         const previousWeekSpent = this.sumPrices(this.coffees.filter((coffee) => {
             const coffeeDate = new Date(coffee.timestamp);
             return coffeeDate >= previousWeekStart && coffeeDate < currentWeekStart;
@@ -500,6 +500,10 @@ class CoffeeTracker {
 
     startOfDay(date) {
         return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    }
+
+    getRollingWindowStart(days) {
+        return new Date(this.startOfDay(new Date()).getTime() - (days - 1) * 24 * 60 * 60 * 1000);
     }
 
     getTrackedDayCount() {
