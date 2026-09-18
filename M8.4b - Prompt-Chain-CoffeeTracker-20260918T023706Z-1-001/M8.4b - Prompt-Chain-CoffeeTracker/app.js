@@ -88,6 +88,7 @@ class CoffeeTracker {
             return;
         }
 
+        const previousCoffees = this.coffees.map((coffee) => ({ ...coffee }));
         this.coffees.unshift({
             id: this.generateId(),
             type: coffeeData.type,
@@ -96,8 +97,9 @@ class CoffeeTracker {
             timestamp: new Date().toISOString()
         });
 
-        this.afterCoffeeChange('Coffee added! ☕');
-        this.resetForm();
+        if (this.afterCoffeeChange('Coffee added! ☕', previousCoffees)) {
+            this.resetForm();
+        }
     }
 
     getFormData() {
@@ -126,6 +128,7 @@ class CoffeeTracker {
     }
 
     updateCoffee(coffeeData) {
+        const previousCoffees = this.coffees.map((coffee) => ({ ...coffee }));
         const coffeeIndex = this.coffees.findIndex((coffee) => coffee.id === this.editingCoffeeId);
         if (coffeeIndex === -1) {
             this.cancelEdit();
@@ -140,8 +143,9 @@ class CoffeeTracker {
             price: coffeeData.price
         };
 
-        this.afterCoffeeChange('Coffee updated! ✨');
-        this.resetForm();
+        if (this.afterCoffeeChange('Coffee updated! ✨', previousCoffees)) {
+            this.resetForm();
+        }
     }
 
     startEdit(id) {
@@ -175,6 +179,7 @@ class CoffeeTracker {
     }
 
     deleteCoffee(id) {
+        const previousCoffees = this.coffees.map((coffee) => ({ ...coffee }));
         const originalLength = this.coffees.length;
         this.coffees = this.coffees.filter((coffee) => coffee.id !== id);
 
@@ -182,24 +187,31 @@ class CoffeeTracker {
             return;
         }
 
-        if (this.editingCoffeeId === id) {
+        if (this.afterCoffeeChange('Coffee removed', previousCoffees) && this.editingCoffeeId === id) {
             this.resetForm();
         }
-
-        this.afterCoffeeChange('Coffee removed');
     }
 
     clearAllCoffees() {
+        const previousCoffees = this.coffees.map((coffee) => ({ ...coffee }));
         this.coffees = [];
-        this.resetForm();
-        this.afterCoffeeChange('All coffee history cleared');
+        if (this.afterCoffeeChange('All coffee history cleared', previousCoffees)) {
+            this.resetForm();
+        }
     }
 
-    afterCoffeeChange(message) {
-        this.saveCoffees();
+    afterCoffeeChange(message, previousCoffees) {
+        if (!this.saveCoffees()) {
+            this.coffees = previousCoffees;
+            this.updateStats();
+            this.renderCoffeeList();
+            return false;
+        }
+
         this.updateStats();
         this.renderCoffeeList();
         this.showNotification(message);
+        return true;
     }
 
     updateStats() {
