@@ -331,7 +331,7 @@ class CoffeeTracker {
         }
 
         const days = filter === 'week' ? 7 : 30;
-        const threshold = this.getRollingWindowStart(days);
+        const threshold = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
         return coffeeDate >= threshold;
     }
 
@@ -503,7 +503,12 @@ class CoffeeTracker {
 
         const type = typeof coffee.type === 'string' && coffee.type.trim() ? coffee.type.trim() : 'Other';
         const notes = typeof coffee.notes === 'string' ? coffee.notes.trim() : '';
-        const timestamp = Number.isNaN(new Date(coffee.timestamp).getTime()) ? new Date().toISOString() : new Date(coffee.timestamp).toISOString();
+        const parsedTimestamp = new Date(coffee.timestamp);
+        if (Number.isNaN(parsedTimestamp.getTime())) {
+            return null;
+        }
+
+        const timestamp = parsedTimestamp.toISOString();
         const parsedPrice = coffee.price === null || coffee.price === undefined || coffee.price === ''
             ? null
             : Number(coffee.price);
