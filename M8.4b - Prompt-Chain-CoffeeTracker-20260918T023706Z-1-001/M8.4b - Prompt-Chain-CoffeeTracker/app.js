@@ -3,6 +3,7 @@ class CoffeeTracker {
         this.storageKey = 'coffeeTrackerData';
         this.legacyStorageKey = 'coffees';
         this.storageVersion = 1;
+        // A lightweight default reminder threshold for habit awareness, not a medical recommendation.
         this.dailyLimit = 4;
         this.editingCoffeeId = null;
         this.filters = {
@@ -331,7 +332,7 @@ class CoffeeTracker {
         }
 
         const days = filter === 'week' ? 7 : 30;
-        const threshold = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+        const threshold = this.getRollingWindowStart(days);
         return coffeeDate >= threshold;
     }
 
