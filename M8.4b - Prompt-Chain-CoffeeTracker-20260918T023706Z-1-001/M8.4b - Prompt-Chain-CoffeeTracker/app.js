@@ -427,12 +427,17 @@ class CoffeeTracker {
                 version: this.storageVersion,
                 coffees: this.coffees
             }));
-            localStorage.removeItem(this.legacyStorageKey);
-            return true;
         } catch (error) {
             this.showNotification('Unable to save coffee history locally', '#f44336');
             return false;
         }
+
+        try {
+            localStorage.removeItem(this.legacyStorageKey);
+        } catch (error) {
+        }
+
+        return true;
     }
 
     loadCoffees() {
@@ -464,9 +469,19 @@ class CoffeeTracker {
             throw new Error('Invalid coffee data');
         }
 
+        const seenIds = new Set();
+
         return coffees
             .map((coffee) => this.sanitizeCoffee(coffee))
-            .filter(Boolean);
+            .filter(Boolean)
+            .map((coffee) => {
+                while (seenIds.has(coffee.id)) {
+                    coffee.id = this.generateId();
+                }
+
+                seenIds.add(coffee.id);
+                return coffee;
+            });
     }
 
     sanitizeCoffee(coffee) {
@@ -511,12 +526,9 @@ class CoffeeTracker {
             return 0;
         }
 
-        const sortedDates = this.coffees
-            .map((coffee) => this.startOfDay(new Date(coffee.timestamp)).getTime())
-            .sort((a, b) => a - b);
-        const firstDay = sortedDates[0];
-        const lastDay = sortedDates[sortedDates.length - 1];
-        return Math.floor((lastDay - firstDay) / (24 * 60 * 60 * 1000)) + 1;
+        return new Set(
+            this.coffees.map((coffee) => this.startOfDay(new Date(coffee.timestamp)).getTime())
+        ).size;
     }
 
     formatCurrency(amount) {
