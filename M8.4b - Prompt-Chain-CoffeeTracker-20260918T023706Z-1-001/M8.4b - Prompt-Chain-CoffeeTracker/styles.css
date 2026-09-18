@@ -68,8 +68,13 @@ header h1 {
     color: #667eea;
 }
 
+.stat-value-small {
+    font-size: 1.5rem;
+}
+
 .add-coffee-section,
-.history-section {
+.history-section,
+.insights-section {
     background: white;
     padding: 25px;
     border-radius: 15px;
@@ -126,7 +131,7 @@ input[type="number"]:focus {
 .btn-primary {
     background: #667eea;
     color: white;
-    width: 100%;
+    flex: 1;
 }
 
 .btn-primary:hover {
@@ -149,6 +154,23 @@ input[type="number"]:focus {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
+}
+
+.history-controls,
+.form-actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.insights-summary {
+    line-height: 1.6;
+    color: #555;
+    background: #f8f9ff;
+    border: 1px solid #dde3ff;
+    border-radius: 10px;
+    padding: 16px;
 }
 
 .coffee-list {
@@ -194,6 +216,12 @@ input[type="number"]:focus {
     font-style: italic;
 }
 
+.coffee-actions {
+    display: flex;
+    gap: 8px;
+    margin-left: 12px;
+}
+
 .coffee-price {
     color: #4caf50;
     font-weight: 600;
@@ -212,6 +240,31 @@ input[type="number"]:focus {
 
 .btn-delete:hover {
     background: #ff5252;
+}
+
+.btn-edit,
+.btn-cancel {
+    white-space: nowrap;
+}
+
+.btn-cancel {
+    background: #fff3cd;
+    color: #8a6d3b;
+}
+
+.btn-cancel:hover {
+    background: #ffe69c;
+}
+
+.form-error {
+    min-height: 1.2rem;
+    margin-bottom: 12px;
+    color: #d32f2f;
+    font-size: 0.9rem;
+}
+
+.hidden {
+    display: none;
 }
 
 .empty-state {
@@ -255,6 +308,17 @@ input[type="number"]:focus {
     .history-header {
         flex-direction: column;
         gap: 10px;
+    }
+
+    .coffee-item {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+
+    .coffee-actions {
+        margin-left: 0;
+        justify-content: flex-end;
     }
 
     .btn-secondary {

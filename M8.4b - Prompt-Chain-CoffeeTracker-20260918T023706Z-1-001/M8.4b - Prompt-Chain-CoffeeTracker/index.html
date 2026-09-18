@@ -30,6 +30,27 @@
                 <div class="stat-label">Total Spent</div>
                 <div class="stat-value" id="totalSpent">$0</div>
             </div>
+            <div class="stat-card">
+                <div class="stat-label">Avg / Day</div>
+                <div class="stat-value" id="avgPerDay">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Favorite</div>
+                <div class="stat-value stat-value-small" id="mostCommonType">—</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">7 Day Spend</div>
+                <div class="stat-value stat-value-small" id="weekSpent">$0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">30 Day Spend</div>
+                <div class="stat-value stat-value-small" id="monthSpent">$0</div>
+            </div>
+        </div>
+
+        <div class="insights-section">
+            <h2>Insights</h2>
+            <div id="insightsSummary" class="insights-summary">Add a coffee to see habit insights.</div>
         </div>
 
         <div class="add-coffee-section">
@@ -56,7 +77,11 @@
                     <label for="coffeeNotes">Notes (optional)</label>
                     <input type="text" id="coffeeNotes" placeholder="e.g., at home, with milk">
                 </div>
-                <button type="submit" class="btn-primary">Add Coffee</button>
+                <div id="formError" class="form-error" aria-live="polite"></div>
+                <div class="form-actions">
+                    <button type="submit" id="submitCoffee" class="btn-primary">Add Coffee</button>
+                    <button type="button" id="cancelEdit" class="btn-secondary btn-cancel hidden">Cancel Edit</button>
+                </div>
             </form>
         </div>
 
@@ -64,6 +89,22 @@
             <div class="history-header">
                 <h2>Coffee History</h2>
                 <button id="clearHistory" class="btn-secondary">Clear All</button>
+            </div>
+            <div class="history-controls">
+                <input type="text" id="searchCoffee" placeholder="Search by type or notes">
+                <select id="dateFilter">
+                    <option value="all">All dates</option>
+                    <option value="today">Today</option>
+                    <option value="week">Last 7 days</option>
+                    <option value="month">Last 30 days</option>
+                </select>
+                <select id="sortFilter">
+                    <option value="newest">Newest first</option>
+                    <option value="oldest">Oldest first</option>
+                    <option value="price-high">Most expensive</option>
+                    <option value="price-low">Least expensive</option>
+                    <option value="type">Type A-Z</option>
+                </select>
             </div>
             <div id="coffeeList" class="coffee-list"></div>
         </div>
